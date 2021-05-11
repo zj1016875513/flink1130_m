@@ -45,7 +45,6 @@ public class Flink01_Project_PV_2 {
                 }
             })
             .print();
-        
         try {
             env.execute();
         } catch (Exception e) {
