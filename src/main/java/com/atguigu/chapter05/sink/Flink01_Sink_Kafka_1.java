@@ -27,13 +27,13 @@ public class Flink01_Sink_Kafka_1 {
         ArrayList<WaterSensor> waterSensors = new ArrayList<>();
         waterSensors.add(new WaterSensor("sensor_11", 1607527992000L, 20));
         waterSensors.add(new WaterSensor("sensor_11", 1607527994000L, 50));
-        waterSensors.add(new WaterSensor("sensor_11", 1607527994000L, 50));
-        waterSensors.add(new WaterSensor("sensor_11", 1607527994000L, 50));
-        waterSensors.add(new WaterSensor("sensor_11", 1607527994000L, 50));
-        waterSensors.add(new WaterSensor("sensor_1", 1607527994000L, 50));
         waterSensors.add(new WaterSensor("sensor_1", 1607527994000L, 50));
         waterSensors.add(new WaterSensor("sensor_1", 1607527994000L, 50));
         waterSensors.add(new WaterSensor("sensor_1", 1607527996000L, 50));
+        waterSensors.add(new WaterSensor("sensor_11", 1607527994000L, 50));
+        waterSensors.add(new WaterSensor("sensor_11", 1607527994000L, 50));
+        waterSensors.add(new WaterSensor("sensor_11", 1607527994000L, 50));
+        waterSensors.add(new WaterSensor("sensor_1", 1607527994000L, 50));
         waterSensors.add(new WaterSensor("sensor_1", 1607527993000L, 10));
         waterSensors.add(new WaterSensor("sensor_1", 1607527993000L, 10));
        ;
@@ -46,14 +46,14 @@ public class Flink01_Sink_Kafka_1 {
         env
             .fromCollection(waterSensors)
             .addSink(new FlinkKafkaProducer<WaterSensor>(
-                "sensor_5",
+                "sensor_6",
                 new KafkaSerializationSchema<WaterSensor>() {
                     @Override
                     public ProducerRecord<byte[], byte[]> serialize(WaterSensor element,
                                                                     @Nullable Long timestamp) {
                         String jsonObj = JSON.toJSONString(element);
                         return new ProducerRecord<>(
-                            "sensor_5",
+                            "sensor_6",
                             element.getId().getBytes(),
                             jsonObj.getBytes()
     
