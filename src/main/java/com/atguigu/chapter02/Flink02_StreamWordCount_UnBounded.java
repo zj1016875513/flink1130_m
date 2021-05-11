@@ -4,6 +4,7 @@ import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.java.functions.KeySelector;
 import org.apache.flink.api.java.tuple.Tuple2;
+import org.apache.flink.configuration.Configuration;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
@@ -15,9 +16,12 @@ import org.apache.flink.util.Collector;
  */
 public class Flink02_StreamWordCount_UnBounded {
     public static void main(String[] args) throws Exception {
+        
         // 流式api, 处理有界流(从文件读取数据)
         // 1. 获取流式执行环境
-        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+        Configuration conf = new Configuration();
+        conf.setInteger("rest.port", 2000);
+        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment(conf);
         env.setParallelism(1);
         // 2. 从文件获取流
         DataStreamSource<String> lineDS = env.socketTextStream("hadoop162", 9999);
@@ -38,11 +42,12 @@ public class Flink02_StreamWordCount_UnBounded {
                     return Tuple2.of(word, 1L);
                 }
             });
-    
+        
         SingleOutputStreamOperator<Tuple2<String, Long>> result = wordAndOneDS
             .keyBy(new KeySelector<Tuple2<String, Long>, String>() {
                 @Override
                 public String getKey(Tuple2<String, Long> t) throws Exception {
+                    Thread.sleep(1000000);
                     return t.f0;
                 }
             })
