@@ -43,6 +43,7 @@ public class Flink01_Project_PV_2 {
     
                         out.collect(sum);
                     }
+                    
                 }
             })
             .print();
