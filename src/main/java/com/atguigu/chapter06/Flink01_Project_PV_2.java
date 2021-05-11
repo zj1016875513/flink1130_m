@@ -40,10 +40,8 @@ public class Flink01_Project_PV_2 {
                                            Collector<Long> out) throws Exception {
                     if("pv".equals(value.getBehavior())){
                         sum++;
-    
                         out.collect(sum);
                     }
-                    
                 }
             })
             .print();
