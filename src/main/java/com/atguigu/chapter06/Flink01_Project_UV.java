@@ -37,7 +37,7 @@ public class Flink01_Project_UV {
                         data[3],
                         Long.valueOf(data[4]));
                     if ("pv".equals(ub.getBehavior())) {
-                        out.collect(Tuple2.of("pv", ub.getUserId()));
+                        out.collect(    Tuple2.of("pv", ub.getUserId())    );
                     }
                     
                 }
