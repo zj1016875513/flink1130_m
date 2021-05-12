@@ -15,7 +15,7 @@ import java.util.HashSet;
  * @Author lizhenchao@atguigu.cn
  * @Date 2021/5/11 16:29
  */
-public class Flink01_Project_UV {
+public class Flink02_Project_UV {
     public static void main(String[] args) {
         Configuration conf = new Configuration();
         conf.setInteger("rest.port", 20000);
