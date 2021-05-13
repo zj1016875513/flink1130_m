@@ -3,12 +3,14 @@ package com.atguigu.chapter07;
 import com.atguigu.bean.WaterSensor;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.configuration.Configuration;
+import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.windowing.ProcessWindowFunction;
 import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows;
 import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
 import org.apache.flink.util.Collector;
+import org.apache.flink.util.OutputTag;
 
 import java.time.Duration;
 
@@ -23,8 +25,8 @@ public class Flink10_Window_WaterMark_OutOrderness {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment(conf);
         env.setParallelism(1);
         env.getConfig().setAutoWatermarkInterval(1000);
-        
-        env
+    
+        SingleOutputStreamOperator<String> main = env
             .socketTextStream("hadoop162", 9999)
             .map(line -> {
                 String[] data = line.split(",");
@@ -32,7 +34,7 @@ public class Flink10_Window_WaterMark_OutOrderness {
                     data[0],
                     Long.valueOf(data[1]),
                     Integer.valueOf(data[2]));
-                
+            
             })
             .assignTimestampsAndWatermarks(
                 WatermarkStrategy
@@ -41,6 +43,8 @@ public class Flink10_Window_WaterMark_OutOrderness {
             )
             .keyBy(WaterSensor::getId)
             .window(TumblingEventTimeWindows.of(Time.seconds(5)))
+            //.allowedLateness(Time.seconds(2))
+            .sideOutputLateData(new OutputTag<WaterSensor>("lateData") {})
             .process(new ProcessWindowFunction<WaterSensor, String, String, TimeWindow>() {
                 @Override
                 public void process(String key,
@@ -58,9 +62,12 @@ public class Flink10_Window_WaterMark_OutOrderness {
                             + "元素个数: " + count
                     );
                 }
-            })
-            .print();
-        
+            });
+    
+        main.print("main");
+    
+        main.getSideOutput(new OutputTag<WaterSensor>("lateData") {}).print("late");
+    
         try {
             env.execute();
         } catch (Exception e) {
@@ -68,3 +75,15 @@ public class Flink10_Window_WaterMark_OutOrderness {
         }
     }
 }
+/*
+保证数据不丢失:
+1. 水印
+2. 允许迟到
+    到了窗口的结束时间(水印)的时候, 这个会进行计算, 但是不关窗
+    如果有属于这个窗口的数据到达, 则会重新计算
+    迟到也有一个上限
+
+3. 使用侧输出流
+ 
+
+ */

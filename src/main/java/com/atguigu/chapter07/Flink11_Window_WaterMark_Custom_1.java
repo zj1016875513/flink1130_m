@@ -19,7 +19,7 @@ public class Flink11_Window_WaterMark_Custom_1 {
         Configuration conf = new Configuration();
         conf.setInteger("rest.port", 20000);
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment(conf);
-        env.setParallelism(1);
+        env.setParallelism(2);
         env.getConfig().setAutoWatermarkInterval(1000);
         
         env
@@ -71,6 +71,9 @@ public class Flink11_Window_WaterMark_Custom_1 {
     }
     
     public static class MyPeriodWaterMark implements WatermarkGenerator<WaterSensor> {
+        public MyPeriodWaterMark(){
+            System.out.println("xxxxxx");
+        }
         
         long maxTs = Long.MIN_VALUE + 3000 + 1;
         
