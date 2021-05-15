@@ -89,7 +89,7 @@ public class Flink08_Kafka_Flink_Kafka {
             );
         
         try {
-            env.execute();
+            env.execute("job1");
         } catch (Exception e) {
             e.printStackTrace();
         }
