@@ -41,7 +41,8 @@ public class Flink10_Cep_Pattern_Group {
         // 2. 写规则: 定义模式
         Pattern<WaterSensor, WaterSensor> pattern = Pattern
             .begin(
-                Pattern.<WaterSensor>begin("sensor_1")
+                Pattern
+                    .<WaterSensor>begin("sensor_1")
                     .where(new SimpleCondition<WaterSensor>() {
                         @Override
                         public boolean filter(WaterSensor value) throws Exception {
@@ -57,7 +58,7 @@ public class Flink10_Cep_Pattern_Group {
                     })
             )
             .times(2).consecutive();
-    
+        
         // 3. 使用模式去匹配数据类, 把模式作用在数据流中
         PatternStream<WaterSensor> ps = CEP.pattern(stream, pattern);
         
