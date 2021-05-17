@@ -7,7 +7,7 @@ import org.apache.flink.cep.CEP;
 import org.apache.flink.cep.PatternSelectFunction;
 import org.apache.flink.cep.PatternStream;
 import org.apache.flink.cep.pattern.Pattern;
-import org.apache.flink.cep.pattern.conditions.SimpleCondition;
+import org.apache.flink.cep.pattern.conditions.IterativeCondition;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
@@ -20,7 +20,7 @@ import java.util.Map;
  * @Author lizhenchao@atguigu.cn
  * @Date 2021/5/17 9:48
  */
-public class Flink02_Cep_BaseUse_Loop {
+public class Flink03_Cep_BaseUse_Iteractive_Condition {
     public static void main(String[] args) {
         
         Configuration conf = new Configuration();
@@ -41,16 +41,19 @@ public class Flink02_Cep_BaseUse_Loop {
         // 2. 写规则: 定义模式
         Pattern<WaterSensor, WaterSensor> pattern = Pattern
             .<WaterSensor>begin("start")
-            .where(new SimpleCondition<WaterSensor>() {
+            .where(new IterativeCondition<WaterSensor>() {
                 @Override
-                public boolean filter(WaterSensor value) throws Exception {
-                    return value.getId().equals("sensor_1");
+                public boolean filter(WaterSensor value,
+                                      Context<WaterSensor> ctx) throws Exception {
+                    Iterable<WaterSensor> start = ctx.getEventsForPattern("start");
+                    for (WaterSensor waterSensor : start) {
+                        System.out.println("x: " + waterSensor);
+                    }
+                    return "sensor_1".equals(value.getId());
                 }
             })
             .times(2);
-        //            .times(2,4);  // [2,4]
-        //            .timesOrMore(2) ;  // [2, 无穷)
-        //            .oneOrMore();  // .timesOrMore(1)
+           
         
         // 3. 使用模式去匹配数据类, 把模式作用在数据流中
         PatternStream<WaterSensor> ps = CEP.pattern(stream, pattern);

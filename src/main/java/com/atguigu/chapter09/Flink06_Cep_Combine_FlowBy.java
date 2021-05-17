@@ -20,7 +20,7 @@ import java.util.Map;
  * @Author lizhenchao@atguigu.cn
  * @Date 2021/5/17 9:48
  */
-public class Flink02_Cep_BaseUse_Loop {
+public class Flink06_Cep_Combine_FlowBy {
     public static void main(String[] args) {
         
         Configuration conf = new Configuration();
@@ -47,10 +47,21 @@ public class Flink02_Cep_BaseUse_Loop {
                     return value.getId().equals("sensor_1");
                 }
             })
-            .times(2);
-        //            .times(2,4);  // [2,4]
-        //            .timesOrMore(2) ;  // [2, 无穷)
-        //            .oneOrMore();  // .timesOrMore(1)
+            //            .followedBy("end")
+            .notFollowedBy("end")
+            .where(new SimpleCondition<WaterSensor>() {
+                @Override
+                public boolean filter(WaterSensor value) throws Exception {
+                    return value.getId().equals("sensor_2");
+                }
+            })
+            .next("next")
+            .where(new SimpleCondition<WaterSensor>() {
+                @Override
+                public boolean filter(WaterSensor value) throws Exception {
+                    return value.getId().equals("sensor_3");
+                }
+            });
         
         // 3. 使用模式去匹配数据类, 把模式作用在数据流中
         PatternStream<WaterSensor> ps = CEP.pattern(stream, pattern);
