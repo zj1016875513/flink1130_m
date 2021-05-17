@@ -20,13 +20,13 @@ import java.util.Map;
  * @Author lizhenchao@atguigu.cn
  * @Date 2021/5/17 9:48
  */
-public class Flink01_Cep_BaseUse {
+public class Flink02_Cep_BaseUse_Loop {
     public static void main(String[] args) {
         
         Configuration conf = new Configuration();
         conf.setInteger("rest.port", 20000);
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment(conf);
-        env.setParallelism(2);
+        env.setParallelism(1);
         
         // 1. 先获取数据流
         SingleOutputStreamOperator<WaterSensor> stream = env
@@ -47,13 +47,10 @@ public class Flink01_Cep_BaseUse {
                     return value.getId().equals("sensor_1");
                 }
             })
-            .next("end")
-            .where(new SimpleCondition<WaterSensor>() {
-                @Override
-                public boolean filter(WaterSensor value) throws Exception {
-                     return value.getId().equals("sensor_2");
-                }
-            });
+            //            .times(2);
+            //            .times(2,4);  // [2,4]
+            //            .timesOrMore(2) ;  // [2, 无穷)
+            .oneOrMore();  // .timesOrMore(1)
         
         // 3. 使用模式去匹配数据类, 把模式作用在数据流中
         PatternStream<WaterSensor> ps = CEP.pattern(stream, pattern);
@@ -61,11 +58,11 @@ public class Flink01_Cep_BaseUse {
         // 4. 得到符合条件的数据
         ps
             .select(new PatternSelectFunction<WaterSensor, String>() {
-            @Override
-            public String select(Map<String, List<WaterSensor>> map) throws Exception {
-                return map.get("start").toString();
-            }
-        })
+                @Override
+                public String select(Map<String, List<WaterSensor>> map) throws Exception {
+                    return map.toString();
+                }
+            })
             .print();
         
         try {
