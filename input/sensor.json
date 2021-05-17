@@ -1,3 +1,4 @@
 {"id": "sensor_1", "ts": 1000, "vc": 10}
 {"id": "sensor_2", "ts": 2000, "vc": 20}
 {"id": "sensor_1", "ts": 3000, "vc": 30}
+{"id": "sensor_2", "ts": 4000, "vc": 40}
