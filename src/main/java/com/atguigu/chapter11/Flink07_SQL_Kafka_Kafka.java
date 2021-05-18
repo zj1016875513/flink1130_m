@@ -28,8 +28,7 @@ public class Flink07_SQL_Kafka_Kafka {
                                 "   'scan.startup.mode' = 'latest-offset',  " +
                                 "   'format' = 'csv'  " +
                                 ")");
-    
-    
+        
         // sink表
         tableEnv.executeSql("create table abc(" +
                                 "   id string, " +
@@ -41,17 +40,15 @@ public class Flink07_SQL_Kafka_Kafka {
                                 "   'format' = 'json',  " +
                                 "   'sink.partitioner' = 'round-robin'  " +
                                 ")");
-    
+        
         Table table = tableEnv.sqlQuery("select id, vc from sensor");
         // 把table的数据写入到sink表有两种写法:
         // 1. 直接调用table的方法
-//        table.executeInsert("abc");
+        //        table.executeInsert("abc");
         // 2. 使用 sql语句:  insert into ... select ...
         tableEnv.createTemporaryView("a", table);
         tableEnv.executeSql("insert into abc select * from a");
         
-        
-    
     }
 }
 /*
