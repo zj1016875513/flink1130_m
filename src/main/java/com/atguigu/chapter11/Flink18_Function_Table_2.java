@@ -34,9 +34,9 @@ public class Flink18_Function_Table_2 {
                           "from words," +
                           "lateral table(ual(f0))").execute().print();*/
     
-        tEnv.sqlQuery("select f0, upper_word, len " +
+        tEnv.sqlQuery("select f0, a, b " +
                           "from words " +
-                          "left join lateral table(ual(f0)) on true").execute().print();
+                          "left join lateral table(ual(f0)) as T(a, b) on true").execute().print();
     
     }
     
