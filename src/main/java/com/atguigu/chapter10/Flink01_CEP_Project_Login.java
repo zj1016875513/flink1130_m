@@ -23,7 +23,7 @@ import java.util.Map;
 public class Flink01_CEP_Project_Login {
     public static void main(String[] args) throws Exception {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-        env.setParallelism(2);
+        env.setParallelism(1);
         // 创建WatermarkStrategy
         WatermarkStrategy<LoginEvent> wms = WatermarkStrategy
             .<LoginEvent>forBoundedOutOfOrderness(Duration.ofSeconds(20))

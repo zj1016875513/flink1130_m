@@ -59,11 +59,11 @@ public class Flink13_Window_Grouped_Tumbling_2 {
             .sqlQuery(
                 "select " +
                     "id, " +
-                    "session_start(t, interval '3' second) w_start, " +
-                    "session_end(t, interval '3' second) w_end, " +
+                    "session_start(t, interval '2' second) w_start, " +
+                    "session_end(t, interval '2' second) w_end, " +
                     "sum(vc) vc_sum " +
                     "from sensor " +
-                    "group by id, session(t, interval '3' second)"
+                    "group by id, session(t, interval '2' second)"
             )
             .execute()
             .print();

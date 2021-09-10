@@ -1,6 +1,7 @@
 package com.atguigu.chapter11;
 
 import com.atguigu.bean.WaterSensor;
+import org.apache.flink.api.common.eventtime.SerializableTimestampAssigner;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
@@ -30,7 +31,12 @@ public class Flink10_Time_Table_Event {
             .assignTimestampsAndWatermarks(
                 WatermarkStrategy
                     .<WaterSensor>forBoundedOutOfOrderness(Duration.ofSeconds(3))
-                    .withTimestampAssigner((ws, ts) -> ws.getTs())
+                    .withTimestampAssigner(new SerializableTimestampAssigner<WaterSensor>() {
+                        @Override
+                        public long extractTimestamp(WaterSensor ws, long ts) {
+                            return ws.getTs();
+                        }
+                    })
             );
         
         StreamTableEnvironment tEnv = StreamTableEnvironment.create(env);

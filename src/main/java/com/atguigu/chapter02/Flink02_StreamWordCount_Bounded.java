@@ -2,6 +2,7 @@ package com.atguigu.chapter02;
 
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.common.functions.MapFunction;
+import org.apache.flink.api.common.typeinfo.Types;
 import org.apache.flink.api.java.functions.KeySelector;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
@@ -23,29 +24,16 @@ public class Flink02_StreamWordCount_Bounded {
         DataStreamSource<String> lineDS = env.readTextFile("input/words.txt");
         // 3. 对流做各种转换
         SingleOutputStreamOperator<Tuple2<String, Long>> wordAndOneDS = lineDS
-            .flatMap(new FlatMapFunction<String, String>() {
-                @Override
-                public void flatMap(String value,
-                                    Collector<String> out) throws Exception {
-                    for (String word : value.split(" ")) {
-                        out.collect(word);
-                    }
+            .flatMap((FlatMapFunction<String, String>) (value, out) -> {
+                for (String word : value.split(" ")) {
+                    out.collect(word);
                 }
-            })
-            .map(new MapFunction<String, Tuple2<String, Long>>() {
-                @Override
-                public Tuple2<String, Long> map(String word) throws Exception {
-                    return Tuple2.of(word, 1L);
-                }
-            });
+            }).returns(Types.STRING) //要写拉姆达表达式需要跟returns方法
+            .map(word -> Tuple2.of(word, 1L))
+                .returns(Types.TUPLE(Types.STRING,Types.LONG));
     
         SingleOutputStreamOperator<Tuple2<String, Long>> result = wordAndOneDS
-            .keyBy(new KeySelector<Tuple2<String, Long>, String>() {
-                @Override
-                public String getKey(Tuple2<String, Long> t) throws Exception {
-                    return t.f0;
-                }
-            })
+            .keyBy( t -> t.f0)
             .sum(1);
         // 4. 输出流数据
         result.print();

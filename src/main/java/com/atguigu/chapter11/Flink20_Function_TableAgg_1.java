@@ -61,7 +61,7 @@ public class Flink20_Function_TableAgg_1 {
             return new FirstSecond();
         }
         
-        // 对水位进行累加:  计算最大和第二大
+        // 对水位进行累加:  计算最大和第二大    在累加器中计算最大值和第二大值
         public void accumulate(FirstSecond acc, Integer v){  // f = 100 s = 80    100  f=120  s=80
             if(v > acc.first){
                 acc.second = acc.first;
@@ -72,10 +72,10 @@ public class Flink20_Function_TableAgg_1 {
         }
         
         // 把结果发射出去
-    
+
         public void emitValue(FirstSecond acc, Collector<Tuple2<Integer, Integer>> out){
             out.collect(Tuple2.of(acc.first, acc.second));  // 调用一次, 结果就有一行
-            out.collect(Tuple2.of(acc.first, acc.second));
+//            out.collect(Tuple2.of(acc.first, acc.second));
         }
     }
     

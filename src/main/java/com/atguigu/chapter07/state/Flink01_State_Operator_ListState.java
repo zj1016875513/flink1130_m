@@ -23,7 +23,7 @@ public class Flink01_State_Operator_ListState {
         conf.setInteger("rest.port", 20000);
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment(conf);
         env.setParallelism(2);
-        env.enableCheckpointing(3000);
+        env.enableCheckpointing(3000);// 每 3000ms 开始一次 checkpoint
     
         env
             .socketTextStream("hadoop162", 9999)
@@ -42,7 +42,7 @@ public class Flink01_State_Operator_ListState {
         private ListState<String> listState;
         ArrayList<String> list = new ArrayList<>();
         
-    
+
         @Override
         public void flatMap(String value, Collector<String> out) throws Exception {
             
@@ -84,5 +84,11 @@ public class Flink01_State_Operator_ListState {
 1. 列表状态
 2. 联合列表
 3. 广播状态
+	列表状态（List state）   状态平均分配
+将状态表示为一组数据的列表
+	联合列表状态（Union list state）    状态每人来一份一样的
+也是将状态表示为数据的列表。它与常规列表状态的区别在于，在发生故障时，或者从保存点（savepoint）启动应用程序时如何恢复。
+一种是均匀分配(List state)，另外一种是将所有 State 合并为全量 State 再分发给每个实例(Union list state)。
+
 
  */

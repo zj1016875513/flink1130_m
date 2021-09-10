@@ -24,10 +24,10 @@ public class Flink01_State_Operator_BroadState {
         env.enableCheckpointing(3000);
         MapStateDescriptor<String, String> bdStateDescriptor = new MapStateDescriptor<>("bdState", String.class, String.class);
         DataStreamSource<String> dataStream = env
-            .socketTextStream("hadoop162", 8888);
+            .socketTextStream("hadoop102", 8888);
         
         BroadcastStream<String> bdStream = env
-            .socketTextStream("hadoop162", 9999)
+            .socketTextStream("hadoop102", 9999)
             .broadcast(bdStateDescriptor);
         
         dataStream
@@ -42,11 +42,11 @@ public class Flink01_State_Operator_BroadState {
                     ReadOnlyBroadcastState<String, String> dbState = ctx.getBroadcastState(bdStateDescriptor);
                     String logic = dbState.get("switch");
                     if ("0".equals(logic)) {
-                        out.collect("切换到 0 号处理逻辑");
+                        out.collect("切换到 0 号处理逻辑，数据为："+data);
                     } else if ("1".equals(logic)) {
-                        out.collect("切换到 1 号处理逻辑");
+                        out.collect("切换到 1 号处理逻辑，数据为："+data);
                     } else {
-                        out.collect("切换到 默认 处理逻辑");
+                        out.collect("切换到 默认 处理逻辑，数据为："+data);
                     }
                 }
                 

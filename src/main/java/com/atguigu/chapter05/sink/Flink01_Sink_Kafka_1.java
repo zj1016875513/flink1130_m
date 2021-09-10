@@ -56,7 +56,6 @@ public class Flink01_Sink_Kafka_1 {
                             "sensor_6",
                             element.getId().getBytes(),
                             jsonObj.getBytes()
-    
                         );
                     }
                 },

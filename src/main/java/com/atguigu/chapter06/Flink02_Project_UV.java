@@ -7,6 +7,7 @@ import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.KeyedProcessFunction;
+import org.apache.flink.streaming.api.functions.ProcessFunction;
 import org.apache.flink.util.Collector;
 
 import java.util.HashSet;
@@ -42,28 +43,40 @@ public class Flink02_Project_UV {
                     
                 }
             })
-            .keyBy(t -> t.f0)
+
+/*      //这种不进行keyby的结果肯定不对，因为key是在两个线程中各运行各的
+        .process(new ProcessFunction<Tuple2<String, Long>, Object>() {
+            HashSet<Long> uids = new HashSet<>();
+            @Override
+            public void processElement(Tuple2<String, Long> value, Context ctx, Collector<Object> out) throws Exception {
+                if (uids.add(value.f1)) {
+                        out.collect((long) uids.size());
+                    }
+            }
+        })*/
+
+            .keyBy(t -> t.f0)//这里keyby的是“pv”字符串，那么计算肯定是在某一个线程中完成的
             .process(new KeyedProcessFunction<String, Tuple2<String, Long>, Long>() {
                 HashSet<Long> uids = new HashSet<>();
-                
+
                 @Override
                 public void processElement(Tuple2<String, Long> value,
                                            Context ctx,
                                            Collector<Long> out) throws Exception {
-                    
+
                     // 有一条pv数据, 则把uid存起来, 然后计算uid的个数, 就是uv
-                    /*int preSize = uids.size();
+                    int preSize = uids.size();
                     uids.add(value.f1);
                     int postSize = uids.size();
                     if (postSize > preSize) {
-                        
+
                         out.collect((long) uids.size());
-                    }*/
-    
+                    }
+
                     if (uids.add(value.f1)) {
                         out.collect((long) uids.size());
                     }
-                    
+
                 }
             })
             .print();

@@ -40,7 +40,7 @@ public class Flink14_Timer_ProcessingTime {
                         long now = System.currentTimeMillis();
                         System.out.println("now: " + now);
                         // 注册定时器
-                        ctx.timerService().registerProcessingTimeTimer(now + 5000);
+                        ctx.timerService().registerProcessingTimeTimer(now + 5000); //到(now+5000)这个时间之后触发定时器
                     }
         
                 }

@@ -43,7 +43,7 @@ public class Flink01_Sink_Kafka {
             .addSink(new FlinkKafkaProducer<String>(
                 "hadoop162:9092",
                 "sensor1",
-                new SimpleStringSchema()
+                new SimpleStringSchema()  //序列化类型
             ));
         
         try {

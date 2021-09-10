@@ -22,7 +22,7 @@ public class Flink18_Function_Table_2 {
         Table table = tEnv.fromValues("hello world", "hello atguigu", "abc a");
         tEnv.createTemporaryView("words", table);
         
-        // 注册后使用
+        // 注册后使用  注册UpperAndLength.class函数，取名为ual
         tEnv.createTemporaryFunction("ual", UpperAndLength.class);
     
         /*tEnv.sqlQuery("select f0, upper_word, len " +
@@ -34,9 +34,10 @@ public class Flink18_Function_Table_2 {
                           "from words," +
                           "lateral table(ual(f0))").execute().print();*/
     
-        tEnv.sqlQuery("select f0, a, b " +
+        tEnv.sqlQuery("select f0, upper_word, len " +
                           "from words " +
-                          "left join lateral table(ual(f0)) as T(a, b) on true").execute().print();
+                          "left join lateral table(ual(f0)) as T(upper_word, len) on true").execute().print();
+//        left join 因为长度小于10的字符串都返回null，则 abc a 的值都为null
     
     }
     

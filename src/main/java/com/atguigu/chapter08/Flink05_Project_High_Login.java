@@ -74,7 +74,7 @@ public class Flink05_Project_High_Login {
                             if (delta <= 2) {
                                 out.collect(ctx.getCurrentKey() + " 在恶意登录....");
                             }
-                            list.remove(0);
+                            list.remove(0);//如果间隔不是2秒那么不是在恶意登录，那么移除list中的第一个元素等待下一个判断
                             
                             // 更新状态
                             failTsState.update(list);

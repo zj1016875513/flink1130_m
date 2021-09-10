@@ -69,13 +69,14 @@ public class Flink11_Cep_Pattern_WithIn {
                     @Override
                     public String timeout(Map<String, List<WaterSensor>> map,
                                           long timeoutTimestamp) throws Exception {
-                        return map.toString();
+//                        return map.toString(); //可以发现超时的只显示start里的内容，没有end的内容
+                        return map.get("start").get(0).toString(); //获取"start"内的内容，再获取数组中第一个json对象，再tostring；
                     }
                 },
                 new PatternSelectFunction<WaterSensor, String>() {
                     @Override
                     public String select(Map<String, List<WaterSensor>> map) throws Exception {
-                        return map.toString();
+                        return map.toString(); //既显示start的内容，也显示end里的内容
                     }
                 }
             );

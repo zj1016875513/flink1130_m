@@ -44,17 +44,19 @@ public class Flink15_Timer_EventTime {
                     if ("sensor_1".equals(ctx.getCurrentKey())) {
                         Long ts = value.getTs() * 1000;
                         System.out.println("ts: " + ts);
-                        ctx.timerService().registerEventTimeTimer(ts + 5000);
+                        ctx.timerService().registerEventTimeTimer(ts + 5000);//设置水印时间大于当前ts+5000的时候触发定时器
                     }
                 }
-                
+
+
+                //这个方法只有在定时器触发的时候才调用
                 @Override
                 public void onTimer(long timestamp,
                                     OnTimerContext ctx,
                                     Collector<String> out) throws Exception {
                     System.out.println("timestamp:" + timestamp);
-                    out.collect("水印: " + ctx.timerService().currentWatermark());
-                    
+                    out.collect("水印: " + ctx.timerService().currentWatermark());//打印当前水印时间
+//                    ctx.timerService().currentProcessingTime(); //这是获取当前运行的时间
                 }
             })
             .print();

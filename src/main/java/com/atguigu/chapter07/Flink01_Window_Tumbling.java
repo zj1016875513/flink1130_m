@@ -10,6 +10,7 @@ import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
 import org.apache.flink.util.Collector;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -48,9 +49,9 @@ public class Flink01_Window_Tumbling {
                         words.add(t.f0);
                     }
                     TimeWindow window = ctx.window();
-                    Date start = new Date(window.getStart());
-                    Date end = new Date(window.getEnd());
-                    
+                    String start = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(window.getStart()));
+                    String end = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(window.getEnd()));
+
                     out.collect("key=" + key + ", window=[" + start + ", " + end + "), words=" + words);
                 }
             })

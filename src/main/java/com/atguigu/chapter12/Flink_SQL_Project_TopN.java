@@ -55,21 +55,23 @@ public class Flink_SQL_Project_TopN {
                                      "* " +
                                      "from t2 " +
                                      "where rk<=3");
+
+        t3.execute().print();
         
         // 4. 数据写出的到mysql
-        tEnv.executeSql("create table hot_item(" +
-                            "item_id bigint, " +
-                            "w_end timestamp(3), " +
-                            "item_count bigint," +
-                            "rk bigint, " +
-                            "primary key (w_end, rk) NOT ENFORCED" +
-                            ")with(" +
-                            "   'connector' = 'jdbc', " +
-                            "   'url' = 'jdbc:mysql://hadoop162:3306/flink_sql?useSSL=false', " +
-                            "   'table-name' = 'hot_item', " +
-                            "   'username' = 'root', " +
-                            "   'password' = 'aaaaaa' " +
-                            ")");
-        t3.executeInsert("hot_item");
+//        tEnv.executeSql("create table hot_item(" +
+//                            "item_id bigint, " +
+//                            "w_end timestamp(3), " +
+//                            "item_count bigint," +
+//                            "rk bigint, " +
+//                            "primary key (w_end, rk) NOT ENFORCED" +
+//                            ")with(" +
+//                            "   'connector' = 'jdbc', " +
+//                            "   'url' = 'jdbc:mysql://hadoop162:3306/flink_sql?useSSL=false', " +
+//                            "   'table-name' = 'hot_item', " +
+//                            "   'username' = 'root', " +
+//                            "   'password' = 'aaaaaa' " +
+//                            ")");
+//        t3.executeInsert("hot_item");
     }
 }

@@ -25,8 +25,7 @@ public class Flink01_BatchWordCount {
         // 3.1 "a b c" -> "a" "b" "c"
         FlatMapOperator<String, String> wordDS = sourceDS.flatMap(new FlatMapFunction<String, String>() {
             @Override
-            public void flatMap(String line,
-                                Collector<String> out) throws Exception {
+            public void flatMap(String line, Collector<String> out) throws Exception {
                 String[] words = line.split(" ");
                 for (String word : words) {
                     out.collect(word);

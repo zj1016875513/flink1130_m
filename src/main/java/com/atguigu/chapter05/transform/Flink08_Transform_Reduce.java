@@ -18,8 +18,8 @@ public class Flink08_Transform_Reduce {
     
         DataStreamSource<WaterSensor> s1 = env.fromElements(
 //            new WaterSensor("sensor_1", 4L, 40),
-            new WaterSensor("sensor_1", 2L, 50),
-            new WaterSensor("sensor_1", 1L, 40),
+                new WaterSensor("sensor_1", 1L, 40),
+//                new WaterSensor("sensor_1", 2L, 50),
             new WaterSensor("sensor_2", 2L, 20),
 //            new WaterSensor("sensor_3", 3L, 30),
             new WaterSensor("sensor_3", 5L, 50));

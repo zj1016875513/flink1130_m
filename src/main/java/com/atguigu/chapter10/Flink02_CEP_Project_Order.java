@@ -93,8 +93,8 @@ public class Flink02_CEP_Project_Order {
                 
             }
         );
-        mail.filter(msg -> msg.contains("异常")).print();
-        mail.getSideOutput(new OutputTag<String>("late") {}).print();
+        mail.filter(msg -> msg.contains("异常")).print("有pay没create订单");
+        mail.getSideOutput(new OutputTag<String>("late") {}).print("超时订单");
     
         env.execute();
     }

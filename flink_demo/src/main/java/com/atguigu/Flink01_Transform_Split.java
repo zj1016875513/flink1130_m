@@ -30,14 +30,17 @@ public class Flink01_Transform_Split {
                     return Arrays.asList("偶数", "0");
                 } else {
                 
-                    return Arrays.asList("奇数");
+                    return Arrays.asList("奇数","1");
                 }
             
             }
         });
     
-        DataStream<Integer> s11 = ss.select("0");
-        s11.print();
+//        DataStream<Integer> s11 = ss.select("0");
+//        s11.print();
+
+        DataStream<Integer> s12 = ss.select("奇数");
+        s12.print();
         
         // 侧输出流 替换掉了切割流
     

@@ -34,8 +34,8 @@ public class Flink18_Function_Table_1 {
         // 注册后使用
         tEnv.createTemporaryFunction("ual", UpperAndLength.class);
         table
-            .joinLateral(call("ual", $("f0")))
-            //            .leftOuterJoinLateral(call(UpperAndLength.class, $("f0")))
+//            .joinLateral(call("ual", $("f0")))
+                        .leftOuterJoinLateral(call(UpperAndLength.class, $("f0")))
             .select($("f0"), $("upper_word"), $("len"))
             .execute()
             .print();

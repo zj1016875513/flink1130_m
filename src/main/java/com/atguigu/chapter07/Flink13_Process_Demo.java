@@ -34,7 +34,7 @@ public class Flink13_Process_Demo {
                                            Context ctx,
                                            Collector<String> out) throws Exception {
                     String currentKey = ctx.getCurrentKey();
-    
+                    out.collect(currentKey);
                 }
             })
             .print();

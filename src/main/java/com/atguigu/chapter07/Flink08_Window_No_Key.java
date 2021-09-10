@@ -30,7 +30,8 @@ public class Flink08_Window_No_Key {
             .windowAll(TumblingProcessingTimeWindows.of(Time.seconds(5)))
             .sum(1).setParallelism(2)
             .print();
-        
+        //没有keyby windowAll 会进入一个窗口   发送(a,3) (b,4)  输入之后也会在控制台输出(a,7)
+        //非key分区的流上使用window, 如果把并行度强行设置为>1, 则会抛出异常
         try {
             env.execute();
         } catch (Exception e) {

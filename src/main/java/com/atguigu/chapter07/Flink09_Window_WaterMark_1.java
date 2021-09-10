@@ -43,7 +43,7 @@ public class Flink09_Window_WaterMark_1 {
                         }
                     })
             )
-            .keyBy(WaterSensor::getId)
+            .keyBy(waterSensor -> waterSensor.getId())
             .window(TumblingEventTimeWindows.of(Time.seconds(5)))
             .process(new ProcessWindowFunction<WaterSensor, String, String, TimeWindow>() {
                 @Override

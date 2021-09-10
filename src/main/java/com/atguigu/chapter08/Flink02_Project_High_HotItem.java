@@ -80,59 +80,61 @@ public class Flink02_Project_High_HotItem {
                     }
                 }
             )
+                //到这里之后商品的统计就完了，接下来就要求topN了
             .keyBy(HotItem::getWindowEndTime)
             .process(new KeyedProcessFunction<Long, HotItem, String>() {
-                
+
                 private ValueState<Long> timerTs;
                 private ListState<HotItem> hotItemState;
-                
+
                 @Override
                 public void open(Configuration parameters) throws Exception {
                     hotItemState = getRuntimeContext()
                         .getListState(new ListStateDescriptor<HotItem>("hotItemState", HotItem.class));
-                    
+
                     timerTs = getRuntimeContext().getState(new ValueStateDescriptor<Long>("timerTs", Long.class));
                 }
-                
+
                 @Override
                 public void processElement(HotItem hotItem,
                                            Context ctx,
                                            Collector<String> out) throws Exception {
-                    hotItemState.add(hotItem);
-                    
-                    if (timerTs.value() == null) {
-                        Long time = ctx.getCurrentKey() + 3000;
-                        ctx.timerService().registerEventTimeTimer(time);
-                        timerTs.update(time);
+                    hotItemState.add(hotItem);   //将当前商品添加进hotItemState状态
+
+                    if (timerTs.value() == null) {                       //按窗口结束时间分组之后，如果timeerTs状态的值不为null
+                        Long time = ctx.getCurrentKey() + 3000;          //当前按窗口结束时间+3000作为key
+                        ctx.timerService().registerEventTimeTimer(time); //窗口时间结束3000ms之后才触发定时器
+                        timerTs.update(time);                            //将当前key的时间+3000ms之后写入timerTS状态
                     }
-                    
+
                 }
-                
+
                 @Override
                 public void onTimer(long timestamp,
                                     OnTimerContext ctx,
                                     Collector<String> out) throws Exception {
                     List<HotItem> hotItems = MyFlinkUtil.iterable2List(hotItemState.get());
-                    
+
                     // 原地排序
                     hotItems.sort((o1, o2) -> o2.getCount().compareTo(o1.getCount()));
-                    
+
                     StringBuilder sb = new StringBuilder();
                     sb
                         .append("-------------------\n")
                         .append("窗口结束时间: ")
-                        .append(timestamp - 3000)
+                        .append(timestamp - 3000)  //因为前面注册的时候加了3000
                         .append("\n");
                     // 取top3
                     for (int i = 0, count = Math.min(3, hotItems.size()); i < count; i++) {
                         sb.append(hotItems.get(i)).append("\n");
                     }
                     out.collect(sb.toString());
-                    
+
                     //不清也可以, 清除是为了节省内存
+                    // 不清也可以因为是键控状态，所以没问题，如果要清，也只能在onTimer()里清，因为这里不清后面的key就变了
                     hotItemState.clear();
                     timerTs.clear();
-                    
+
                 }
             })
             .print();

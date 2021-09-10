@@ -35,7 +35,7 @@ public class Flink05_Table_Sink_File {
         Table resultTable = sensorTable
             .where($("id").isEqual("sensor_1"))
             .select($("id"), $("ts"), $("vc"));
-        
+
         Schema schema = new Schema()
             .field("id", DataTypes.STRING())
             .field("ts", DataTypes.BIGINT())

@@ -42,10 +42,9 @@ public class Flink19_Function_Agg_1 {
         tEnv.createTemporaryFunction("my_sum", MySum.class);
         table
             .groupBy($("id"))
-            .select($("id"), call("my_sum", $("vc")).as("vc_sum"))
+            .select($("id"), call("my_sum", $("ts"),$("vc")).as("vc_sum"))
             .execute()
             .print();
-    
     }
     
     public static class MyAcc{

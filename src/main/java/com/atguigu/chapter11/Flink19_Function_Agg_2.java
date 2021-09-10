@@ -31,8 +31,8 @@ public class Flink19_Function_Agg_2 {
         
         tEnv.createTemporaryFunction("my_sum", MySum.class);
     
-        tEnv.sqlQuery("select id, my_sum(ts, vc) from sensor group by id").execute().print();
-    
+        tEnv.sqlQuery("select id, my_sum(ts, vc)as vc_sum from sensor group by id").execute().print();
+        //把ts和vc都加起来求和  如果只需要计算ts的和则 my_sum(ts)即可
     }
     
     public static class MyAcc{

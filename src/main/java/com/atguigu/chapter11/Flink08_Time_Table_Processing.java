@@ -6,6 +6,9 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.table.api.Table;
 import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
 
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+
 import static org.apache.flink.table.api.Expressions.$;
 
 /**
@@ -25,6 +28,7 @@ public class Flink08_Time_Table_Processing {
                              new WaterSensor("sensor_2", 6000L, 60));
     
         StreamTableEnvironment tEnv = StreamTableEnvironment.create(env);
+        tEnv.getConfig().setLocalTimeZone(ZoneOffset.ofHours(8));
         // 表示处理时间的字段, 必须是一个新增字段, 而且要在最后
         Table table = tEnv.fromDataStream(waterSensorStream, $("id"), $("ts"), $("vc"), $("pt").proctime());
         

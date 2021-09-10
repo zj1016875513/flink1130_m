@@ -1,6 +1,8 @@
 package com.atguigu.chapter05.transform;
 
 import com.atguigu.bean.WaterSensor;
+import org.apache.flink.api.common.RuntimeExecutionMode;
+import org.apache.flink.api.java.functions.KeySelector;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
@@ -15,6 +17,7 @@ public class Flink07_Transform_RollAgg {
         conf.setInteger("rest.port", 20000);
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment(conf);
         env.setParallelism(2);
+//        env.setRuntimeMode(RuntimeExecutionMode.AUTOMATIC);
     
         DataStreamSource<WaterSensor> s1 = env.fromElements(
             new WaterSensor("sensor_1", 4L, 40),
@@ -25,12 +28,12 @@ public class Flink07_Transform_RollAgg {
             new WaterSensor("sensor_3", 5L, 50));
         // select  id, sum(..), 常量 from t1 group by id
         s1
-            .keyBy(ws -> ws.getId())
+            .keyBy( ws -> ws.getId())
             //            .sum("vc")
-            //            .max("vc")
+//                        .max("vc")
             //            .min("vc")
-//            .maxBy("vc", false)
-            .minBy("vc", false)
+            .maxBy("vc", false)
+//            .minBy("vc", false)
             .print();
     
         try {
